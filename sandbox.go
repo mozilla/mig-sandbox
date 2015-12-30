@@ -46,7 +46,7 @@ type SandboxProfile struct {
 	Filters       []FilterOperation
 }
 
-func jail(sandboxProfile SandboxProfile) {
+func Jail(sandboxProfile SandboxProfile) {
 	C.install_sighandler()
 	filter, err := seccomp.NewFilter(sandboxProfile.DefaultPolicy)
 	if err != nil {
