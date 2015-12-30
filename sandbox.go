@@ -37,8 +37,9 @@ import (
 type FilterAction string
 
 type FilterOperation struct {
-	FilterOn []string
-	Action   seccomp.ScmpAction
+	FilterOn   []string
+	Action     seccomp.ScmpAction
+	Conditions []seccomp.ScmpCondition
 }
 
 type SandboxProfile struct {
@@ -63,18 +64,26 @@ func Jail(sandboxProfile SandboxProfile) {
 	}
 	log.Printf("%s\n", sandboxProfile.DefaultPolicy)
 	for _, profileFilter := range sandboxProfile.Filters {
-		for _, call_name := range profileFilter.FilterOn {
-			call, err := seccomp.GetSyscallFromName(call_name)
+		for _, callName := range profileFilter.FilterOn {
+			call, err := seccomp.GetSyscallFromName(callName)
 			if err != nil {
-				log.Fatal("Error getting syscall number of %s: %s\n", call_name, err)
+				log.Fatal("Error getting syscall number of %s: %s\n", callName, err)
 			} else {
 				log.Printf("Got hook to syscall %d\n", call)
 			}
-			err = filter.AddRule(call, profileFilter.Action)
-			if err != nil {
-				log.Fatal("Error adding rule to restrict syscall: %s\n", err)
+			// if there are conditions, construct a conditional rule
+			if len(profileFilter.Conditions) > 0 {
+				err = filter.AddRuleConditional(call, profileFilter.Action, profileFilter.Conditions)
+				if err != nil {
+					log.Fatal("Error adding conditional rule: %s", err)
+				}
 			} else {
-				log.Printf("Added rule to permit syscall %s\n", call_name)
+				err = filter.AddRule(call, profileFilter.Action)
+				if err != nil {
+					log.Fatal("Error adding rule to restrict syscall: %s\n", err)
+				} else {
+					log.Printf("Added rule to restrict syscall %s\n", callName)
+				}
 			}
 		}
 	}
