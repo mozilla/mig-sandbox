@@ -64,7 +64,10 @@ func Jail(sandboxProfile SandboxProfile) {
 	filter.SetTsync(true)
 	filter.SetNoNewPrivsBit(true)
 	err = filter.Load()
-	if err != nil {
+	if err == seccomp.errBadFilter {
+		log.Fatal("Error bad filter configuration: %s", err)
+		exit(-1)
+	} else if err != nil {
 		log.Fatal("Error loading filter: %s", err)
 	} else {
 		log.Printf("Loaded filter\n")
