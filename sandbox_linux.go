@@ -65,7 +65,11 @@ func Jail(sandboxProfile SandboxProfile) {
 	filter.SetNoNewPrivsBit(true)
 	err = filter.Load()
 	if err != nil {
-		log.Fatal("Error loading filter: %s", err)
+		if err != errBadFilter {
+			log.Printf("Error loading seccomp filter, seccomp (filter mode) not supported by kernel: %s. Sandbox features disabled.", err)
+		} else {
+			log.Fatal("Error loading filter: %s", err)
+		}
 	} else {
 		log.Printf("Loaded filter\n")
 	}
