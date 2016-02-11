@@ -1,3 +1,4 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/mozilla/mig-sandbox)](https://goreportcard.com/report/github.com/mozilla/mig-sandbox)
 # MIG Agent Sandboxing
 
 ## Overview
