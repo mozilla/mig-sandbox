@@ -1,4 +1,5 @@
 // +build linux
+
 package sandbox
 
 //#include "signal_handler.h"
@@ -9,10 +10,8 @@ import (
 	"log"
 )
 
-
 var ActTrap = seccomp.ActTrap
 var ActAllow = seccomp.ActAllow
-
 
 type FilterAction string
 
@@ -31,7 +30,7 @@ func Jail(sandboxProfile SandboxProfile) {
 	C.install_sighandler()
 	filter, err := seccomp.NewFilter(sandboxProfile.DefaultPolicy)
 	if err != nil {
-		log.Fatal("Error creating filter: %s\n", err)
+		log.Fatalf("Error creating filter: %s\n", err)
 	} else {
 		log.Printf("Created filter\n")
 	}
@@ -42,12 +41,11 @@ func Jail(sandboxProfile SandboxProfile) {
 	} else if action != seccomp.ActTrap {
 		log.Printf("Default action of filter was set incorrectly!\n")
 	}
-	log.Printf("%s\n", sandboxProfile.DefaultPolicy)
 	for _, profileFilter := range sandboxProfile.Filters {
 		for _, callName := range profileFilter.FilterOn {
 			call, err := seccomp.GetSyscallFromName(callName)
 			if err != nil {
-				log.Fatal("Error getting syscall number of %s: %s\n", callName, err)
+				log.Fatalf("Error getting syscall number of %s: %s\n", callName, err)
 			} else {
 				log.Printf("Got hook to syscall %d\n", call)
 			}
@@ -55,12 +53,12 @@ func Jail(sandboxProfile SandboxProfile) {
 			if len(profileFilter.Conditions) > 0 {
 				err = filter.AddRuleConditional(call, profileFilter.Action, profileFilter.Conditions)
 				if err != nil {
-					log.Fatal("Error adding conditional rule: %s", err)
+					log.Fatalf("Error adding conditional rule: %s", err)
 				}
 			} else {
 				err = filter.AddRule(call, profileFilter.Action)
 				if err != nil {
-					log.Fatal("Error adding rule to restrict syscall: %s\n", err)
+					log.Fatalf("Error adding rule to restrict syscall: %s\n", err)
 				} else {
 					log.Printf("Added rule to restrict syscall %s\n", callName)
 				}
@@ -71,7 +69,7 @@ func Jail(sandboxProfile SandboxProfile) {
 	filter.SetNoNewPrivsBit(true)
 	err = filter.Load()
 	if err != nil {
-		log.Fatal("Error loading filter: %s", err)
+		log.Fatalf("Error loading filter: %s", err)
 	} else {
 		log.Printf("Loaded filter\n")
 	}
