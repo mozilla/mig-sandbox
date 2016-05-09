@@ -1,4 +1,12 @@
 // +build linux
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Contributors:
+// Alexandru Tudorica <tudalex@gmail.com>
+// vladimirdiaconescu <vladimirdiaconescu@users.noreply.github.com>
+// Teodora Baluta <teobaluta@gmail.com>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +18,7 @@
 struct sigaction old_action;
 
 void handler(int signum, siginfo_t *info, void *context) {
-	//TODO: Put this in a nice formatted json error
+    //TODO: Put this in a nice formatted json error
     fprintf(stderr,"Jail violation caused by syscall %s. Code %d\n", syscall_mappings[info->si_syscall], info->si_syscall);
     //fprintf(stderr,"Code %d\n", info->si_syscall);
     exit(1);
