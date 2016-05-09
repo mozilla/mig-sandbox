@@ -17,6 +17,7 @@ import "C"
 import (
 	"github.com/seccomp/libseccomp-golang"
 	"log"
+	"syscall"
 )
 
 var ActTrap = seccomp.ActTrap
@@ -77,9 +78,11 @@ func Jail(sandboxProfile SandboxProfile) {
 	filter.SetTsync(true)
 	filter.SetNoNewPrivsBit(true)
 	err = filter.Load()
-	if err != nil {
-		log.Fatalf("Error loading filter: %s", err)
+	errBadFilter, ok := err.(syscall.Errno)
+	if ok {
+		log.Printf("Failed to load seccomp filter, seccomp (filter mode) not supported by kernel: %d. Sandbox features disabled.",
+			int(errBadFilter))
 	} else {
-		log.Printf("Loaded filter\n")
+		log.Fatalf("Filter context is invalid: %s", errBadFilter)
 	}
 }
