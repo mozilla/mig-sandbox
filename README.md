@@ -1,6 +1,15 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/mozilla/mig-sandbox)](https://goreportcard.com/report/github.com/mozilla/mig-sandbox)
 # MIG Agent Sandboxing
 
+⚠️ Deprecation Notice ⚠️
+-------------------------
+
+Mozilla is no longer maintaining the Mozilla InvestiGator (MIG) project.
+
+Mozilla is also no longer making use of this code internally.
+
+You are welcome to use this code as is with no warranty. Please fork it to continue development.
+
 ## Overview
 
 This is the MIG Sandbox Project repository. As the name implies, it is a sandbox for the MIG Agent modules.
